@@ -1,3 +1,5 @@
+module USGSEarthQuakesApiModule
+export get_content_usgs
 using Pkg
 using Dates
 using HTTP
@@ -5,7 +7,7 @@ using JSON
 using DataFrames
 
 struct EarthquakeEvent
-    id::String
+    publicID::String
     time::DateTime
     magnitude::Float64
     mmi::Union{Float64, Int}
@@ -18,9 +20,11 @@ end
 get_country(place::String) = strip(split(place, ",")[end])
 
 function create_event(event::Dict{String, Any})
+    try
     properties = event["properties"]
     geometry = event["geometry"]
-    id = event["id"]
+    publicID = event["id"]
+    
     time = DateTime(properties["time"])
     magnitude = properties["mag"]
     mmi_value = isnothing(properties["mmi"]) ? -1 : properties["mmi"]
@@ -28,7 +32,10 @@ function create_event(event::Dict{String, Any})
     coordinates = geometry["coordinates"]
     url = properties["url"]
     country = get_country(locality)
-    return EarthquakeEvent(id, time, magnitude, mmi_value, locality, coordinates, url, country)
+    return EarthquakeEvent(publicID, time, magnitude, mmi_value, locality, coordinates, url, country)
+    catch 
+        println(event)
+    end
 end
 
 function get_content_usgs()
@@ -37,7 +44,7 @@ function get_content_usgs()
 
     json_data = JSON.parse(String(response.body))
     events = json_data["features"]
-
+    #println(events)
     earthquake_events = EarthquakeEvent[]
 
     for event in events
@@ -45,7 +52,7 @@ function get_content_usgs()
     end
 
 
-    df = DataFrame(publicID = [event.id for event in earthquake_events],
+    df = DataFrame(publicID = [event.publicID for event in earthquake_events],
                 time = [event.time for event in earthquake_events],
                 magnitude = [event.magnitude for event in earthquake_events],
                 mmi = [event.mmi for event in earthquake_events],
@@ -56,6 +63,6 @@ function get_content_usgs()
     return df
 end
 
-# Print the DataFrame
-# println(df)
-# println(names(df))
+end
+#global_quakes = get_content_usgs()
+#println(global_quakes)
