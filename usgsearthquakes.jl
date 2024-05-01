@@ -51,7 +51,6 @@ function get_content_usgs()
         push!(earthquake_events, create_event(event))
     end
 
-
     df = DataFrame(publicID = [event.publicID for event in earthquake_events],
                 time = [event.time for event in earthquake_events],
                 magnitude = [event.magnitude for event in earthquake_events],
