@@ -21,6 +21,23 @@ struct SismicEarthquakeEvent
     coordinates::Tuple{Float64, Float64}
 end
 
+function parse_flexible_datetime(datetime_str) #Chat gpt made this function because something something varying level of date percision means DateTime gets weird and breaks
+    # Detect and count fractional second digits
+    decimal_index = findfirst('.', datetime_str)
+    if isnothing(decimal_index)
+        # No fractional seconds
+        format_str = "yyyy-MM-ddTHH:mm:ssZ"
+    else
+        # Count the number of digits after the decimal point and before 'Z'
+        end_index = findfirst('Z', datetime_str)
+        fractional_digits = end_index - decimal_index - 1
+        fractional_format = "S"^fractional_digits  # Repeat 'S' as many times as there are fractional digits
+        format_str = "yyyy-MM-ddTHH:mm:ss.$fractional_format" * "Z"
+    end
+
+    return DateTime(datetime_str, DateFormat(format_str))
+end
+
 function create_event(event::Dict{String, Any}) #GPT was used to help fix this function
     properties = event["properties"]
     geometry = event["geometry"]
@@ -28,8 +45,10 @@ function create_event(event::Dict{String, Any}) #GPT was used to help fix this f
 
     publicID = properties["unid"]
     
-    time = DateTime(properties["time"], dateformat"Y-m-dTH:M:S.sssZ")
-    println(time) #Fix something with DateTime
+    unformatted_time = properties["time"]
+    println(unformatted_time)
+    time = parse_flexible_datetime(unformatted_time)
+    
 
     depth = properties["depth"]
     magnitude = properties["mag"]
