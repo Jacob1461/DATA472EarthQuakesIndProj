@@ -1,5 +1,10 @@
 # Main file for running the EarthQuakes scripts
+
+#TODO 
+"""Work on making the code less error prone"""
+
 using Pkg
+Pkg.activate(".")
 
 include("geonetapi.jl")
 using .GeonetEarthQuakesApiModule

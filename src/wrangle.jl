@@ -6,10 +6,7 @@ using DataFrames
 quality_best(row) = row.quality == "best"
 function clean_geonet(geodataset::DataFrame)
     df = filter(quality_best, geodataset)
-    df_new = df[:, [:publicID, :country, :locality, :mmi, :time, :coordinates]]
-    empty_col = [nothing for _ in 1:nrow(df_new)]
-    insertcols!(df_new, 4, :magnitude => empty_col)
-    insertcols!(df_new, 8, :link => empty_col)
+    df_new = df[:, [:publicID, :country, :locality, :magnitude, :mmi, :time, :coordinates, :link]]
     
     return df_new
 end

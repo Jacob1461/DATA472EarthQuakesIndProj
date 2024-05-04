@@ -1,15 +1,10 @@
-using Pkg
-Pkg.add("HTTP")
-Pkg.add("JSON")
-Pkg.add("DataFrames")
 
 using HTTP
-using JSON
-using DataFrames
-
 using Dates
 using JSON
 using DataFrames
+using Format
+using Printf
 
 struct SismicEarthquakeEvent
     publicID::String
@@ -21,24 +16,37 @@ struct SismicEarthquakeEvent
     coordinates::Tuple{Float64, Float64}
 end
 
-function parse_flexible_datetime(datetime_str) #Chat gpt made this function because something something varying level of date percision means DateTime gets weird and breaks
-    # Detect and count fractional second digits
-    decimal_index = findfirst('.', datetime_str)
-    if isnothing(decimal_index)
-        # No fractional seconds
-        format_str = "yyyy-MM-ddTHH:mm:ssZ"
-    else
-        # Count the number of digits after the decimal point and before 'Z'
-        end_index = findfirst('Z', datetime_str)
-        fractional_digits = end_index - decimal_index - 1
-        fractional_format = "S"^fractional_digits  # Repeat 'S' as many times as there are fractional digits
-        format_str = "yyyy-MM-ddTHH:mm:ss.$fractional_format" * "Z"
+function parse_custom_date(date_str)
+    # First try parsing without microseconds
+    main_part_fmt = dateformat"yyyy-mm-dd\THH:MM:SS"
+    microsecond_fmt = dateformat".ssssssZ"
+    
+    try
+        # Attempt to split the datetime and microseconds
+        datetime_part, microsecond_part = split(date_str, '.', limit=2)
+        datetime_part *= "Z"  # Append 'Z' back to the main datetime part
+        
+        # Parse the datetime part up to seconds
+        dt = DateTime(datetime_part, dateformat"yyyy-mm-dd\THH:MM:SSZ")
+        
+        if contains(microsecond_part, 'Z')
+            # Strip the 'Z' and parse microseconds
+            microsecond_part = replace(microsecond_part, "Z" => "")
+            microseconds = parse(Int, microsecond_part) * 10^(6 - length(microsecond_part))
+            return dt + Dates.Millisecond(microseconds ÷ 1000)
+        else
+            return dt
+        end
+    catch e
+        println("Failed to parse '$date_str': $e")
     end
-
-    return DateTime(datetime_str, DateFormat(format_str))
+    
+    error("Date format not recognized: $date_str")
 end
 
-function create_event(event::Dict{String, Any}) #GPT was used to help fix this function
+
+
+function create_event(event::Dict{String, Any})
     properties = event["properties"]
     geometry = event["geometry"]
     coordinates = geometry["coordinates"]
@@ -46,10 +54,9 @@ function create_event(event::Dict{String, Any}) #GPT was used to help fix this f
     publicID = properties["unid"]
     
     unformatted_time = properties["time"]
-    println(unformatted_time)
-    time = parse_flexible_datetime(unformatted_time)
+    #println(unformatted_time)
     
-
+    time = parse_custom_date(strip(unformatted_time))
     depth = properties["depth"]
     magnitude = properties["mag"]
 
@@ -60,8 +67,9 @@ function create_event(event::Dict{String, Any}) #GPT was used to help fix this f
     return SismicEarthquakeEvent(publicID, time, depth, magnitude, magtype, locality, coordinates)
 end
 
-function query_seismic(amount::Int)
-    link = "https://www.seismicportal.eu/fdsnws/event/1/query?limit=$amount&format=json"
+function query_seismic(amount::Int, min_mag::Float64)
+    link = @sprintf("https://www.seismicportal.eu/fdsnws/event/1/query?limit=%d&format=json&minmag=%.1f", amount, min_mag)
+
     response = HTTP.request("GET", link)
 
     json_data = JSON.parse(String(response.body))
@@ -70,8 +78,9 @@ function query_seismic(amount::Int)
     earthquake_events = SismicEarthquakeEvent[]
 
     for event in events
-        if earthquake_events !== nothing
-            push!(earthquake_events, create_event(event))
+        new_event = create_event(event)
+        if new_event !== nothing
+            push!(earthquake_events, new_event)
         else
             println("Skipped an entry because it was nothing")
         end
@@ -89,4 +98,4 @@ function query_seismic(amount::Int)
 end
 
 
-println(query_seismic(25))
+println(query_seismic(50, 2.5))

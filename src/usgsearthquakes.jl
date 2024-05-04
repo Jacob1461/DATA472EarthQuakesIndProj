@@ -1,6 +1,6 @@
 module USGSEarthQuakesApiModule
 export get_content_usgs
-using Pkg
+
 using Dates
 using HTTP
 using JSON
@@ -9,8 +9,8 @@ using DataFrames
 struct EarthquakeEvent
     publicID::String
     time::DateTime
-    magnitude::Float64
-    mmi::Union{Float64, Int}
+    magnitude::Union{Float64, Int, Nothing}
+    mmi::Union{Float64, Int, Nothing}
     locality::String
     coordinates::Vector{Float64}
     url::String
@@ -21,22 +21,26 @@ get_country(place::String) = strip(split(place, ",")[end])
 
 function create_event(event::Dict{String, Any})
     try
-    properties = event["properties"]
-    geometry = event["geometry"]
-    publicID = event["id"]
-    
-    time = DateTime(properties["time"])
-    magnitude = properties["mag"]
-    mmi_value = isnothing(properties["mmi"]) ? -1 : properties["mmi"]
-    locality = properties["place"]
-    coordinates = geometry["coordinates"]
-    url = properties["url"]
-    country = get_country(locality)
-    return EarthquakeEvent(publicID, time, magnitude, mmi_value, locality, coordinates, url, country)
-    catch 
-        println(event)
+        properties = event["properties"]
+        geometry = event["geometry"]
+        publicID = event["id"]
+        unix_time = properties["time"]  # Unix time in milliseconds
+        
+        dt = unix2datetime(unix_time / 1000)
+        magnitude = properties["mag"] === nothing ? -1.0 : properties["mag"]
+        mmi_value = properties["mmi"] === nothing ? -1.0 : properties["mmi"]  # Default to -1.0 if mmi is nothing
+        locality = properties["place"] === nothing ? "Unknown" : properties["place"]
+        coordinates = geometry["coordinates"]  # Assuming this always exists
+        url = properties["url"] === nothing ? "" : properties["url"]  # Default to empty string if url is nothing
+        country = get_country(locality)  # Ensure this function can handle 'Unknown'
+        
+        return EarthquakeEvent(publicID, dt, magnitude, mmi_value, locality, coordinates, url, country)
+    catch e
+        println("Error creating event: ", e)
+        println("Event data: ", event)
     end
 end
+
 
 function get_content_usgs()
     link = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson"
@@ -62,6 +66,6 @@ function get_content_usgs()
     return df
 end
 
+global_quakes = get_content_usgs()
+println(global_quakes)
 end
-#global_quakes = get_content_usgs()
-#println(global_quakes)
