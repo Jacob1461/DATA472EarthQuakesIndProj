@@ -1,9 +1,9 @@
-
+module EMSCEarthQuakesApiModule
+export query_emsc
 using HTTP
 using Dates
 using JSON
 using DataFrames
-using Format
 using Printf
 
 struct SismicEarthquakeEvent
@@ -28,15 +28,15 @@ function parse_custom_date(date_str)
         
         # Parse the datetime part up to seconds
         dt = DateTime(datetime_part, dateformat"yyyy-mm-dd\THH:MM:SSZ")
-        
-        if contains(microsecond_part, 'Z')
-            # Strip the 'Z' and parse microseconds
-            microsecond_part = replace(microsecond_part, "Z" => "")
-            microseconds = parse(Int, microsecond_part) * 10^(6 - length(microsecond_part))
-            return dt + Dates.Millisecond(microseconds ÷ 1000)
-        else
-            return dt
-        end
+        return dt
+        # if contains(microsecond_part, 'Z')
+        #     # Strip the 'Z' and parse microseconds
+        #     microsecond_part = replace(microsecond_part, "Z" => "")
+        #     microseconds = parse(Int, microsecond_part) * 10^(6 - length(microsecond_part))
+        #     return dt + Dates.Millisecond(microseconds ÷ 1000)
+        # else
+        #     return dt
+        # end
     catch e
         println("Failed to parse '$date_str': $e")
     end
@@ -67,7 +67,7 @@ function create_event(event::Dict{String, Any})
     return SismicEarthquakeEvent(publicID, time, depth, magnitude, magtype, locality, coordinates)
 end
 
-function query_seismic(amount::Int, min_mag::Float64)
+function query_emsc(amount::Int, min_mag::Float64)
     link = @sprintf("https://www.seismicportal.eu/fdsnws/event/1/query?limit=%d&format=json&minmag=%.1f", amount, min_mag)
 
     response = HTTP.request("GET", link)
@@ -88,14 +88,14 @@ function query_seismic(amount::Int, min_mag::Float64)
 
 
     df = DataFrame(publicID = [event.publicID for event in earthquake_events],
+                country = [nothing for _ in earthquake_events],
                 time = [event.time for event in earthquake_events],
-                depth = [event.depth for event in earthquake_events],
                 magnitude = [event.magnitude for event in earthquake_events],
                 magtype = [event.magtype for event in earthquake_events],
+                mmi = [nothing for _ in earthquake_events],
                 locality = [event.locality for event in earthquake_events],
+                depth = [event.depth for event in earthquake_events],
                 coordinates = [event.coordinates for event in earthquake_events])
     return df
 end
-
-
-println(query_seismic(50, 2.5))
+end

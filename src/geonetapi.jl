@@ -18,7 +18,7 @@ struct GeoEarthquakeEvent
     time::DateTime
     depth::Float64
     magnitude::Float64
-    mmi::Int
+    mmi::Union{Int, Nothing}
     locality::String
     quality::String
     coordinates::Tuple{Float64, Float64}
@@ -56,24 +56,21 @@ function query_geonet(link::String)
     earthquake_events = GeoEarthquakeEvent[]
 
     for event in events
-        if earthquake_events !== nothing #this is not needed so can be removed
+        if event["properties"]["quality"]== "best"
             push!(earthquake_events, create_event(event))
-        else
-            println("Skipped an entry because it was nothing")
         end
     end
 
-        #Can be improved using a list comprehension
+    
     df = DataFrame(publicID = [event.publicID for event in earthquake_events],
+                country = ["New Zealand" for _ in earthquake_events],
                 time = [event.time for event in earthquake_events],
-                depth = [event.depth for event in earthquake_events],
                 magnitude = [event.magnitude for event in earthquake_events],
+                magtype = [nothing for _ in earthquake_events],
                 mmi = [event.mmi for event in earthquake_events],
                 locality = [event.locality for event in earthquake_events],
-                quality = [event.quality for event in earthquake_events],
-                coordinates = [event.coordinates for event in earthquake_events],
-                country = ["New Zealand" for _ in earthquake_events],
-                link = [nothing for _ in earthquake_events])
+                depth = [event.depth for event in earthquake_events],
+                coordinates = [event.coordinates for event in earthquake_events])
     return df
 end
 
@@ -95,8 +92,6 @@ function get_geonet_quakes(mmi_lower::Int, mmi_upper::Int)
     return earthquakes
 end
 
-eqs = get_geonet_quakes(3,6)
-println(eqs)
 end
 
 

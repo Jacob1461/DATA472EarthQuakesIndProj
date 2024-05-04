@@ -10,10 +10,11 @@ struct EarthquakeEvent
     publicID::String
     time::DateTime
     magnitude::Union{Float64, Int, Nothing}
+    magtype::Union{String, Nothing}
     mmi::Union{Float64, Int, Nothing}
     locality::String
     coordinates::Vector{Float64}
-    url::String
+    url::Union{String, Nothing}
     country::String
 end
 
@@ -27,14 +28,15 @@ function create_event(event::Dict{String, Any})
         unix_time = properties["time"]  # Unix time in milliseconds
         
         dt = unix2datetime(unix_time / 1000)
-        magnitude = properties["mag"] === nothing ? -1.0 : properties["mag"]
-        mmi_value = properties["mmi"] === nothing ? -1.0 : properties["mmi"]  # Default to -1.0 if mmi is nothing
+        magnitude = properties["mag"]
+        magtype = properties["magType"]
+        mmi_value = properties["mmi"]
         locality = properties["place"] === nothing ? "Unknown" : properties["place"]
         coordinates = geometry["coordinates"]  # Assuming this always exists
-        url = properties["url"] === nothing ? "" : properties["url"]  # Default to empty string if url is nothing
+        url = properties["url"]
         country = get_country(locality)  # Ensure this function can handle 'Unknown'
         
-        return EarthquakeEvent(publicID, dt, magnitude, mmi_value, locality, coordinates, url, country)
+        return EarthquakeEvent(publicID, dt, magnitude, magtype, mmi_value, locality, coordinates, url, country)
     catch e
         println("Error creating event: ", e)
         println("Event data: ", event)
@@ -56,16 +58,15 @@ function get_content_usgs()
     end
 
     df = DataFrame(publicID = [event.publicID for event in earthquake_events],
+                country = [event.country for event in earthquake_events],
                 time = [event.time for event in earthquake_events],
                 magnitude = [event.magnitude for event in earthquake_events],
+                magtype = [event.magtype for event in earthquake_events],
                 mmi = [event.mmi for event in earthquake_events],
                 locality = [event.locality for event in earthquake_events],
-                coordinates = [event.coordinates for event in earthquake_events],
-                country = [event.country for event in earthquake_events],
-                link = [event.url for event in earthquake_events])
+                depth = [event.coordinates[3] for event in earthquake_events],
+                coordinates = [(event.coordinates[1], event.coordinates[2]) for event in earthquake_events])
     return df
 end
 
-global_quakes = get_content_usgs()
-println(global_quakes)
 end
