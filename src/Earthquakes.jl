@@ -5,6 +5,10 @@
 
 using Pkg
 Pkg.activate(".")
+using DataFrames
+
+include("database.jl")
+using .DatabaseFunctionality
 
 include("geonetapi.jl")
 using .GeonetEarthQuakesApiModule
@@ -12,27 +16,35 @@ using .GeonetEarthQuakesApiModule
 include("usgsearthquakes.jl")
 using .USGSEarthQuakesApiModule
 
-include("wrangle.jl")
-using .WrangleFrames
-
 include("emsc_earthquakes.jl")
 using .EMSCEarthQuakesApiModule
 
+db = create_database()
+
+function get_data()
+    mmi_lower_bound = 3
+    mmi_upper_bound = 6
+    geonet_earthquakes = get_geonet_quakes(mmi_lower_bound, mmi_upper_bound)
+    #println(geonet_earthquakes)
+    usgs_earthquakes = get_content_usgs()
+    #println(usgs_earthquakes)
+    emsc_quakes = query_emsc(50, 3.5)
+    #println(emsc_quakes)
+    combined_frame = vcat(geonet_earthquakes, usgs_earthquakes, emsc_quakes)
+    #println(combined_frame)
+return combined_frame
+end
+
+earthquakes_data = get_data()
+# println(earthquakes_data)
+# println(nrow(earthquakes_data))
 
 
-mmi_lower_bound = 3
-mmi_upper_bound = 6
-geonet_earthquakes = get_geonet_quakes(mmi_lower_bound, mmi_upper_bound)
-#println(geonet_earthquakes)
-
-usgs_earthquakes = get_content_usgs()
-#println(usgs_earthquakes)
-
-emsc_quakes = query_emsc(50, 3.5)
-#println(emsc_quakes)
+insert_into_db(db, earthquakes_data)
+# println(get_view(db, "earthquake_table"))
+# println(get_view(db, "earthquake_details"))
+# println("#################################################################")
+# println(get_view(db, "temp_insert_data"))
 
 
-combined_frame = vcat(geonet_earthquakes, usgs_earthquakes, emsc_quakes)
-println(combined_frame)
-
-
+#There were 296 entries 11:07pm 5th may. Check that entry adding is working

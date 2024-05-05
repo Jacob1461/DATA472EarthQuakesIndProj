@@ -18,7 +18,7 @@ struct GeoEarthquakeEvent
     time::DateTime
     depth::Float64
     magnitude::Float64
-    mmi::Union{Int, Nothing}
+    mmi::Int
     locality::String
     quality::String
     coordinates::Tuple{Float64, Float64}
@@ -37,7 +37,7 @@ function create_event(event::Dict{String, Any}) #GPT was used to help fix this f
 
     depth = properties["depth"]
     magnitude = properties["magnitude"]
-    mmi = properties["mmi"]
+    mmi = properties["mmi"] === nothing ? -1 : properties["mmi"]
     locality = properties["locality"]
     quality = properties["quality"]
     coordinates = tuple(Float64(coordinates[1]), Float64(coordinates[2])) 
@@ -66,11 +66,12 @@ function query_geonet(link::String)
                 country = ["New Zealand" for _ in earthquake_events],
                 time = [event.time for event in earthquake_events],
                 magnitude = [event.magnitude for event in earthquake_events],
-                magtype = [nothing for _ in earthquake_events],
+                magtype = ["unknown" for _ in earthquake_events],
                 mmi = [event.mmi for event in earthquake_events],
                 locality = [event.locality for event in earthquake_events],
                 depth = [event.depth for event in earthquake_events],
-                coordinates = [event.coordinates for event in earthquake_events])
+                latitude = [event.coordinates[1] for event in earthquake_events],
+                longitude = [ event.coordinates[2] for event in earthquake_events])
     return df
 end
 

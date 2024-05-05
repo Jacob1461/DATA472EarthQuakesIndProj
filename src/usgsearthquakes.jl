@@ -9,12 +9,11 @@ using DataFrames
 struct EarthquakeEvent
     publicID::String
     time::DateTime
-    magnitude::Union{Float64, Int, Nothing}
-    magtype::Union{String, Nothing}
-    mmi::Union{Float64, Int, Nothing}
+    magnitude::Union{Float64, Int}
+    magtype::String
+    mmi::Union{Float64, Int}
     locality::String
     coordinates::Vector{Float64}
-    url::Union{String, Nothing}
     country::String
 end
 
@@ -29,14 +28,13 @@ function create_event(event::Dict{String, Any})
         
         dt = unix2datetime(unix_time / 1000)
         magnitude = properties["mag"]
-        magtype = properties["magType"]
-        mmi_value = properties["mmi"]
+        magtype = properties["magType"] === nothing ? "Unknown" : properties["magType"]
+        mmi_value = properties["mmi"] === nothing ? -1 : properties["mmi"]
         locality = properties["place"] === nothing ? "Unknown" : properties["place"]
         coordinates = geometry["coordinates"]  # Assuming this always exists
-        url = properties["url"]
         country = get_country(locality)  # Ensure this function can handle 'Unknown'
         
-        return EarthquakeEvent(publicID, dt, magnitude, magtype, mmi_value, locality, coordinates, url, country)
+        return EarthquakeEvent(publicID, dt, magnitude, magtype, mmi_value, locality, coordinates,country)
     catch e
         println("Error creating event: ", e)
         println("Event data: ", event)
@@ -65,7 +63,8 @@ function get_content_usgs()
                 mmi = [event.mmi for event in earthquake_events],
                 locality = [event.locality for event in earthquake_events],
                 depth = [event.coordinates[3] for event in earthquake_events],
-                coordinates = [(event.coordinates[1], event.coordinates[2]) for event in earthquake_events])
+                latitude = [event.coordinates[1] for event in earthquake_events],
+                longitude = [ event.coordinates[2] for event in earthquake_events])
     return df
 end
 

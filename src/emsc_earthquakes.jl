@@ -88,14 +88,15 @@ function query_emsc(amount::Int, min_mag::Float64)
 
 
     df = DataFrame(publicID = [event.publicID for event in earthquake_events],
-                country = [nothing for _ in earthquake_events],
+                country = ["unkown" for _ in earthquake_events],
                 time = [event.time for event in earthquake_events],
                 magnitude = [event.magnitude for event in earthquake_events],
                 magtype = [event.magtype for event in earthquake_events],
-                mmi = [nothing for _ in earthquake_events],
+                mmi = [-1 for _ in earthquake_events],
                 locality = [event.locality for event in earthquake_events],
                 depth = [event.depth for event in earthquake_events],
-                coordinates = [event.coordinates for event in earthquake_events])
+                latitude = [event.coordinates[1] for event in earthquake_events],
+                longitude = [ event.coordinates[2] for event in earthquake_events])
     return df
 end
 end
