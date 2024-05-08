@@ -1,7 +1,7 @@
 using SQLite, DBInterface
 
 function create_database()
-    db = SQLite.DB("Earthquakes.db") # "Earthquakes.db" add to argument to make file based rather than in memory
+    db = SQLite.DB("src/database/Earthquakes.db") # "Earthquakes.db" add to argument to make file based rather than in memory
 
     SQLite.execute(db, """
     CREATE TABLE IF NOT EXISTS earthquakes_table (
