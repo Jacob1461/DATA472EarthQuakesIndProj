@@ -21,6 +21,3 @@ function get_geonet_quakes(mmi_lower::Int, mmi_upper::Int)
     
     return all_earthquakes
 end
-
-
-#println(get_geonet_quakes(3,6))
