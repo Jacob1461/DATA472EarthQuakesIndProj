@@ -10,6 +10,8 @@ function get_quakes()
 
     combintation_frame_no_ID = vcat(geonet_quakes, usgs_quakes, emsc_quakes)
     combintation_frame_ID = assign_earthquakeID(combintation_frame_no_ID)
+    # Changed the column order of most important to least important information (rearranged before insertion into db)
+    combintation_frame_ID = combintation_frame_ID[:, ["earthquakeID","country","time", "mag", "locality", "depth", "mmi", "latitude", "longitude", "latitude", "source", "publicID"]] 
     return combintation_frame_ID
 
 end
