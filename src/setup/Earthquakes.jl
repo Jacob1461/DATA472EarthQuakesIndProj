@@ -36,15 +36,13 @@ return combined_frame
 end
 
 earthquakes_data = get_data()
-# println(earthquakes_data)
-# println(nrow(earthquakes_data))
+println(earthquakes_data)
 
 
 insert_into_db(db, earthquakes_data)
-# println(get_view(db, "earthquake_table"))
-# println(get_view(db, "earthquake_details"))
-# println("#################################################################")
-# println(get_view(db, "temp_insert_data"))
+earthquake_table_view = get_view(db, "earthquake_table")
+
+
 
 
 #There were 296 entries 11:07pm 5th may. Check that entry adding is working

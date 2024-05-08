@@ -1,3 +1,6 @@
+
+"""This is no longer supposed to be used"""
+
 module EMSCEarthQuakesApiModule
 export query_emsc
 using HTTP

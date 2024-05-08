@@ -1,6 +1,5 @@
 module GeonetEarthQuakesApiModule
 export get_geonet_quakes
-
 using HTTP
 using JSON
 using DataFrames
@@ -89,7 +88,7 @@ function get_geonet_quakes(mmi_lower::Int, mmi_upper::Int)
         earth_quakes_specific_mmi = query_geonet(specific_api_url)
         append!(earthquakes, earth_quakes_specific_mmi)
     end
-    #println(earthquakes)
+    
     return earthquakes
 end
 
