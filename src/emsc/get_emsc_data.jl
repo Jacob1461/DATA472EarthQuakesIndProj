@@ -1,6 +1,6 @@
 using Pkg
 
-include("build_dataframe.jl")
+include("build_dataframe_emsc.jl")
 include("create_eventemsc.jl")
 include("query_emsc.jl")
 
@@ -12,7 +12,7 @@ for event in vec_of_earthquakes
     push!(earthquake_events, new_event)
 end
 
-earthquake_dataframe = build_dataframe(earthquake_events)
+earthquake_dataframe = build_dataframe_emsc(earthquake_events)
 
 #println(earthquake_dataframe)
 return earthquake_dataframe

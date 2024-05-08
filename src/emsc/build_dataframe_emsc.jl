@@ -1,8 +1,11 @@
-using DataFrames
-include("../Earthquake_event.jl")
+using Pkg
 
-function build_dataframe(earthquake_events::Vector{EarthquakeEvent})
-    df = DataFrame(publicID = [event.publicID for event in earthquake_events],
+using DataFrames
+
+function build_dataframe_emsc(earthquake_events)
+    df = DataFrame(
+                source = ["EMSC" for _ in earthquake_events],
+                publicID = [event.publicID for event in earthquake_events],
                 country = [event.country for event in earthquake_events],
                 time = [event.time for event in earthquake_events],
                 magnitude = [event.magnitude for event in earthquake_events],

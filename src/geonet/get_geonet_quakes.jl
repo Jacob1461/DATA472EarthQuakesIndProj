@@ -1,6 +1,6 @@
 include("create_eventgeo.jl")
 include("querygeonet.jl")
-include("build_dataframe.jl")
+include("build_dataframe_geo.jl")
 include("filter_and_push.jl")
 
 using DataFrames
@@ -15,7 +15,7 @@ function get_geonet_quakes(mmi_lower::Int, mmi_upper::Int)
         specific_api_url = geonet_base_url * string(mmi_level)
         specific_earthquakes_events = query_geonet(specific_api_url)
         earthquake_events = filter_and_push(specific_earthquakes_events)
-        earthquakes_dataframe = build_dataframe(earthquake_events)
+        earthquakes_dataframe = build_dataframe_geo(earthquake_events)
         append!(all_earthquakes, earthquakes_dataframe)
     end
     
