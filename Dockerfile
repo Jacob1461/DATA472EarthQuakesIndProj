@@ -1,12 +1,15 @@
-
 FROM julia:latest
 
 WORKDIR /app
 
-COPY src/ /app
+
+COPY Earthquakes_main.jl /app
+
+COPY src/ /app/src/
+
+COPY Project.toml /app
+COPY Manifest.toml /app
 
 RUN julia --project=@. -e "using Pkg; Pkg.instantiate();"
 
-CMD ["julia", "--project=@.", "Earthquakes.jl"]
-
-#Chatgpt was used to help create Dockerfile
+CMD ["julia", "--project=@.", "Earthquakes_main.jl"]
