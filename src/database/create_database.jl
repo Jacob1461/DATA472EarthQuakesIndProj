@@ -1,45 +1,55 @@
-using SQLite, DBInterface
+using MySQL, DBInterface
 
 function create_database()
-    db = SQLite.DB("src/database/Earthquakes.db") # "Earthquakes.db" add to argument to make file based rather than in memory
+    host = "data472-jcl173-earthquakesdb.cyi9p9kw8doa.ap-southeast-2.rds.amazonaws.com"
+    user = "admin"
+    password = "your-password"
+    database_name = "data472-jcl173-earthquakesdb"
 
-    SQLite.execute(db, """
+    conn = MySQL.Connection(
+        host = host,
+        user = user,
+        password = password,
+        db = database_name
+    )
+
+    MySQL.execute(conn, """
     CREATE TABLE IF NOT EXISTS earthquakes_table (
-        earthquakeID TEXT PRIMARY KEY,
-        country TEXT,
-        time TEXT,
-        magnitude REAL,
-        locality TEXT, 
-        depth REAL,
-        mmi REAL,
-        latitude REAL,
-        longitude REAL,
-        source TEXT,
-        publicID TEXT)""")
+        earthquakeID VARCHAR(255) PRIMARY KEY,
+        country VARCHAR(255),
+        time DATETIME,
+        magnitude DOUBLE,
+        locality VARCHAR(255), 
+        depth DOUBLE,
+        mmi DOUBLE,
+        latitude DOUBLE,
+        longitude DOUBLE,
+        source VARCHAR(255),
+        publicID VARCHAR(255))""")
 
-    SQLite.execute(db, "DROP TABLE IF EXISTS temp_insert_data")
-    SQLite.execute(db, """
+    MySQL.execute(conn, "DROP TABLE IF EXISTS temp_insert_data")
+    MySQL.execute(conn, """
     CREATE TABLE temp_insert_data (
-        earthquakeID TEXT PRIMARY KEY,
-        country TEXT,
-        time TEXT,
-        magnitude REAL,
-        locality TEXT, 
-        depth REAL,
-        mmi REAL,
-        latitude REAL,
-        longitude REAL,
-        source TEXT,
-        publicID TEXT)""")
+        earthquakeID VARCHAR(255) PRIMARY KEY,
+        country VARCHAR(255),
+        time DATETIME,
+        magnitude DOUBLE,
+        locality VARCHAR(255), 
+        depth DOUBLE,
+        mmi DOUBLE,
+        latitude DOUBLE,
+        longitude DOUBLE,
+        source VARCHAR(255),
+        publicID VARCHAR(255))""")
 
-    SQLite.execute(db, """
+    MySQL.execute(conn, """
         CREATE TABLE IF NOT EXISTS grouping_table (
-        earthquakeID TEXT,
-        source TEXT,
-        groupID INTEGER,
+        earthquakeID VARCHAR(255),
+        source VARCHAR(255),
+        groupID INT,
         PRIMARY KEY (earthquakeID, groupID),
         FOREIGN KEY (earthquakeID) REFERENCES earthquakes_table(earthquakeID))""")
 
-    #println(SQLite.tables(db))
-    return db
+    #println(MySQL.tables(conn))
+    return conn
 end

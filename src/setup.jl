@@ -4,7 +4,7 @@ using Pkg
 
 Pkg.activate(joinpath(dirname(@__FILE__), ".."))
 Pkg.update()
-packages = ["HTTP", "JSON", "DataFrames", "Printf", "SQLite", "DBInterface"]
+packages = ["HTTP", "JSON", "DataFrames", "Printf", "SQLite", "DBInterface", "MySQL"]
 
 for package in packages
     Pkg.add(package)
