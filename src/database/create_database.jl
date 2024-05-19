@@ -3,7 +3,7 @@ using MySQL, DBInterface
 function create_database()
     host = "data472-jcl173-earthquakesdb.cyi9p9kw8doa.ap-southeast-2.rds.amazonaws.com"
     user = "admin"
-    password = "your-password"
+    password = "your-password"       
     database_name = "data472-jcl173-earthquakesdb"
 
     conn = MySQL.Connection(
