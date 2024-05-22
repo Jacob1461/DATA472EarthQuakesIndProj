@@ -1,9 +1,18 @@
 using MySQL, DBInterface
+using JSON
+include("database_creds.jl")
+
+config_file = "/home/ubuntu/config.json"
+
+config = read_config(config_file)
+
+db_username = config["db_username"]
+db_password = config["db_password"]
 
 function create_database()
     host = "data472-jcl173-earthquakesdb.cyi9p9kw8doa.ap-southeast-2.rds.amazonaws.com"
-    user = "admin"
-    password = "your-password"       
+    user = db_username
+    password = db_password   
     database_name = "data472-jcl173-earthquakesdb"
 
     conn = MySQL.Connection(
