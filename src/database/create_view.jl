@@ -2,13 +2,13 @@ using MySQL, DBInterface, DataFrames
 
 function get_view(db, datatable::String)
     try
-        MySQL.execute(db, """
+        DBInterface.execute(db, """
         CREATE VIEW IF NOT EXISTS temp_view AS
         SELECT *
         FROM $(datatable)
         """)
         df = DataFrame(DBInterface.execute(db, "SELECT * FROM temp_view"))
-        MySQL.execute(db, "DROP VIEW IF EXISTS temp_view")
+        DBInterface.execute(db, "DROP VIEW IF EXISTS temp_view")
 
         return df
     catch e

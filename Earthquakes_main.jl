@@ -11,7 +11,8 @@ include("src/database/insert_into_db.jl")
 earthquakes_dataframe = get_quakes()
 
 earthquakes_frame = get_quakes()
-println(earthquakes_frame)
+#println(earthquakes_frame)
+
 db = create_database()
 insert_into_db(db, earthquakes_frame)
 println("I think it worked?")

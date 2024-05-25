@@ -11,4 +11,5 @@ for package in packages
 end
 
 Pkg.resolve()
+
 Pkg.precompile()
