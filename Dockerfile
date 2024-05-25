@@ -3,10 +3,10 @@ FROM julia:latest
 
 WORKDIR /app
 
-COPY src/ /app
+COPY . /app
 
-RUN julia --project=@. -e "using Pkg; Pkg.instantiate();"
+RUN julia -e 'using Pkg; Pkg.instantiate(); Pkg.precompile()'
 
-CMD ["julia", "--project=@.", "Earthquakes.jl"]
+CMD ["julia", "--project=@.", "Earthquakes_main.jl"]
 
 #Chatgpt was used to help create Dockerfile
