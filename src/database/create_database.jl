@@ -2,14 +2,8 @@ using MySQL, DBInterface
 using JSON
 include("database_creds.jl")
 
-config_file = "/app/config.json" # make sure to run the docker image with the config attached
-
-config = read_config(config_file)
-
-config = read_config(config_file)
-db_username = config["db_username"]
-db_password = config["db_password"]
-
+db_username = ENV["DB_username"]
+db_password = ENV["DB_password"]
 
 function create_database()
     host = "data472-jcl173-earthquakesdb.cyi9p9kw8doa.ap-southeast-2.rds.amazonaws.com"
@@ -34,19 +28,6 @@ function create_database()
         publicID VARCHAR(255))""")
 
     DBInterface.execute(conn, "DROP TABLE IF EXISTS temp_insert_data")
-    DBInterface.execute(conn, """
-    CREATE TABLE temp_insert_data (
-        earthquakeID VARCHAR(255) PRIMARY KEY,
-        country VARCHAR(255),
-        time DATETIME,
-        magnitude DOUBLE,
-        locality VARCHAR(255), 
-        depth DOUBLE,
-        mmi DOUBLE,
-        latitude DOUBLE,
-        longitude DOUBLE,
-        source VARCHAR(255),
-        publicID VARCHAR(255))""")
 
     DBInterface.execute(conn, """
         CREATE TABLE IF NOT EXISTS grouping_table (
