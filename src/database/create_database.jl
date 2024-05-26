@@ -1,9 +1,8 @@
 using MySQL, DBInterface
 using JSON
-include("database_creds.jl")
 
-db_username = ENV["DB_username"]
-db_password = ENV["DB_password"]
+db_username = ENV["DB_USERNAME"]
+db_password = ENV["DB_PASSWORD"]
 
 function create_database()
     host = "data472-jcl173-earthquakesdb.cyi9p9kw8doa.ap-southeast-2.rds.amazonaws.com"
