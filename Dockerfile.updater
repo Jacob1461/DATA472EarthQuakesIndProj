@@ -2,14 +2,14 @@ FROM julia:latest
 
 WORKDIR /app
 
+COPY Earthquakes_main.jl /app/
+COPY src/updater /app/src/updater/
+COPY Project.toml /app/
+COPY Manifest.toml /app/
+COPY setup.jl /app/
 
-COPY Earthquakes_main.jl /app
 
-COPY src/updater /app/src/
+RUN julia setup.jl
 
-COPY Project.toml /app
-COPY Manifest.toml /app
-
-RUN julia --project=@. -e "using Pkg; Pkg.instantiate();"
 
 CMD ["julia", "--project=@.", "Earthquakes_main.jl"]

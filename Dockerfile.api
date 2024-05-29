@@ -8,7 +8,8 @@ COPY setup.jl /app/
 RUN julia setup.jl
 
 COPY EarthquakesAPI.jl /app/
-COPY src /app/src/
+
+COPY src/API /app/src/
 
 EXPOSE 8080
 
