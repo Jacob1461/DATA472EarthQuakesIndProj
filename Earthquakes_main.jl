@@ -1,12 +1,10 @@
 using Pkg
-Pkg.activate(dirname(@__FILE__))
+Pkg.activate(".")
 Pkg.instantiate()
-#####
-include("src/get_earthquakes.jl")
-include("src/database/create_database.jl")
-include("src/database/create_view.jl")
-include("src/database/insert_into_db.jl")
-include("src/API/APImain.jl")
+include("src/updater/get_earthquakes.jl")
+include("src/updater/database/create_database.jl")
+include("src/updater/database/create_view.jl")
+include("src/updater/database/insert_into_db.jl")
 #####
 
 earthquakes_dataframe = get_quakes()
@@ -20,8 +18,3 @@ insert_into_db(db, earthquakes_frame)
 view_df = get_view(db, "earthquakes_table")
 println(view_df)
 println("Sucess!")
-
-
-
-
-

@@ -1,0 +1,15 @@
+FROM julia:latest
+
+WORKDIR /app
+
+COPY Project.toml Manifest.toml /app/
+COPY setup.jl /app/
+
+RUN julia setup.jl
+
+COPY EarthquakesAPI.jl /app/
+COPY src /app/src/
+
+EXPOSE 8080
+
+CMD ["julia", "--project=@.", "EarthquakesAPI.jl"]

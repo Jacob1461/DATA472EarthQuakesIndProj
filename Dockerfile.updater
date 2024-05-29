@@ -5,7 +5,7 @@ WORKDIR /app
 
 COPY Earthquakes_main.jl /app
 
-COPY src/ /app/src/
+COPY src/updater /app/src/
 
 COPY Project.toml /app
 COPY Manifest.toml /app

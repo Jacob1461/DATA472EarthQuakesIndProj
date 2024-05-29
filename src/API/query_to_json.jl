@@ -1,16 +1,17 @@
 using DataFrames
 using JSON3
+using DataStructures
 
-function create_geojson(df::DataFrame)
+function create_geojson(df::DataFrame; api_version::String="1.0", description::String="This API provides earthquake data including coordinates, depth, time, source, public ID, locality, magnitude, country, and MMI.")
     features = []
     for row in eachrow(df)
-        feature = Dict(
+        feature = OrderedDict(
             "type" => "Feature",
-            "geometry" => Dict(
+            "geometry" => OrderedDict(
                 "type" => "Point",
                 "coordinates" => [row[:longitude], row[:latitude]]
             ),
-            "properties" => Dict(
+            "properties" => OrderedDict(
                 "earthquakeID" => row[:earthquakeID],
                 "country" => row[:country],
                 "time" => string(row[:time]),
@@ -25,7 +26,9 @@ function create_geojson(df::DataFrame)
         push!(features, feature)
     end
 
-    geojson = Dict(
+    geojson = OrderedDict(
+        "apiVersion" => api_version,
+        "description" => description,
         "type" => "FeatureCollection",
         "features" => features
     )
