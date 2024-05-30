@@ -1,21 +1,22 @@
 using Pkg
-Pkg.activate(dirname(@__FILE__))
-Pkg.instantiate()
+Pkg.activate(".")
+include("src/updater/get_earthquakes.jl")
+include("src/updater/database/create_database.jl")
+include("src/updater/database/create_view.jl")
+include("src/updater/database/insert_into_db.jl")
+using DBInterface
 #####
-include("src/get_earthquakes.jl")
-include("src/database/create_database.jl")
-include("src/database/create_view.jl")
-include("src/database/insert_into_db.jl")
-#####
-
-earthquakes_dataframe = get_quakes()
-
+println("Begining...")
 earthquakes_frame = get_quakes()
-println(earthquakes_frame)
-db = create_database()
-insert_into_db(db, earthquakes_frame)
-println("I think it worked?")
+#println(earthquakes_frame)
+conn = create_database()
+println("Database connected")
+insert_into_db(conn, earthquakes_frame)
+view_df = get_view(conn, "earthquakes_table")
+#println(view_df)
+n = nrow(view_df) - nrow(earthquakes_frame)
+println("Sucess!")
+println("Added $n entries to the database")
 
-view_df = get_view(db, "earthquakes_table")
-println(view_df)
-
+println("Closing Connection")
+DBInterface.close!(conn)
