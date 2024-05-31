@@ -4,11 +4,11 @@ using JSON3
 using DataStructures
 
 function format_stats_table(stats_df::DataFrame)
-    return OrderedDict(
-        "DATE" => stats_df[1, :DATE],
-        "today" => stats_df[1, :today],
-        "total" => stats_df[1, :total],
-        "max_mag" => stats_df[1, :max_mag],
-        "min_depth" => stats_df[1, :min_depth]
-    )
+    return [OrderedDict(
+        "DATE" => row[:DATE],
+        "today" => row[:today],
+        "total" => row[:total],
+        "max_mag" => row[:max_mag],
+        "min_depth" => row[:min_depth]
+    ) for row in eachrow(stats_df)]
 end

@@ -6,7 +6,7 @@ using DataFrames
 using JSON3
 using OrderedCollections
 
-function create_geojson(df::DataFrame; api_version::String="2.0", description::String="This API provides earthquake data including coordinates, depth, time, source, public ID, locality, magnitude, country, and MMI.")
+function create_geojson(df::DataFrame; api_version::String="3.0", description::String="This API provides earthquake data including coordinates, depth, time, source, public ID, locality, magnitude, country, and MMI.")
     features = OrderedDict{String, Any}[]
     for row in eachrow(df)
         feature = OrderedDict(
