@@ -1,17 +1,8 @@
 using MySQL, DBInterface
 using JSON
 
-db_username = ENV["DB_USERNAME"]
-db_password = ENV["DB_PASSWORD"]
-db_host = ENV["DB_HOST"]
-function create_database()
-    host = db_host
-    user = db_username
-    password = db_password   
-    database_name = "data472_jcl173_earthquakesdb"
-
-    conn = DBInterface.connect(MySQL.Connection, host, user, password, db = database_name)
-
+function create_database(conn)
+    
     DBInterface.execute(conn, """
     CREATE TABLE IF NOT EXISTS earthquakes_table (
         earthquakeID VARCHAR(255) PRIMARY KEY,

@@ -3,7 +3,7 @@ using Pkg
 Pkg.activate(@__DIR__)
 Pkg.instantiate()
 Pkg.update()
-packages = ["HTTP", "JSON", "DataFrames", "Printf", "DBInterface", "AWS", "AWSS3", "Oxygen", "JSON3", "MySQL", "DataStructures","OrderedCollections" ]
+packages = ["HTTP", "JSON", "DataFrames", "Printf", "DBInterface", "AWS", "AWSS3", "Oxygen", "JSON3", "MySQL", "DataStructures","OrderedCollections", "Distances" ]
 
 for package in packages
     Pkg.add(package)
@@ -25,3 +25,4 @@ using JSON3
 using MySQL
 using DataStructures
 using OrderedCollections
+using Distances

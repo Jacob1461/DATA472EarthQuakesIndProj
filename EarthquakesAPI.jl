@@ -4,7 +4,7 @@ Pkg.activate(".")
 using Oxygen
 using HTTP
 using DataStructures
-include("src/API/database_connection.jl")
+include("src/database_connection.jl")
 include("src/API/query_to_json.jl")
 include("src/API/QueryDB.jl")
 
