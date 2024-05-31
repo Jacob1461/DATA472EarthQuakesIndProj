@@ -2,7 +2,6 @@ using Pkg
 Pkg.activate(".")
 include("src/updater/get_earthquakes.jl")
 include("src/updater/database/create_database.jl")
-include("src/updater/database/create_view.jl")
 include("src/updater/database/insert_into_db.jl")
 include("src/database_connection.jl")
 include("src/updater/database/grouper/create_groups.jl")

@@ -6,7 +6,8 @@ COPY Earthquakes_main.jl /app/
 COPY src/updater /app/src/updater/
 COPY src/database_connection.jl /app/src/
 COPY src/updater/database/grouper /app/src/updater/database/grouper/
-
+COPY src/updater/database/grouper /app/src/updater/database/stats/
+COPY src/create_view.jl /app/src/
 COPY Project.toml /app/
 COPY Manifest.toml /app/
 COPY setup.jl /app/

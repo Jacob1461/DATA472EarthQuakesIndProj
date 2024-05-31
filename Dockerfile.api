@@ -12,6 +12,8 @@ COPY EarthquakesAPI.jl /app/
 
 COPY src/API /app/src/API
 COPY src/database_connection.jl /app/src/
+COPY src/create_view.jl /app/src/
+
 
 EXPOSE 8080
 

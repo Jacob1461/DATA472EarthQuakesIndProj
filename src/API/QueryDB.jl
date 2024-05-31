@@ -1,3 +1,6 @@
+using DBInterface
+using MySQL
+
 function query_database(conn, limit::Int)
     query = """
     SELECT e.earthquakeID, e.country, e.time, e.magnitude, e.locality, e.depth, e.mmi, e.latitude, e.longitude, e.source, e.publicID, 

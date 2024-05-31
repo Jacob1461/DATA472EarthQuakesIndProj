@@ -7,7 +7,7 @@ using DataStructures
 include("src/database_connection.jl")
 include("src/API/query_to_json.jl")
 include("src/API/QueryDB.jl")
-include("src/API/getstats/get_stats_data.jl")
+include("src/API/get_stats_json.jl")
 
 
 @get "/data" function(req::HTTP.Request, limit=100)
