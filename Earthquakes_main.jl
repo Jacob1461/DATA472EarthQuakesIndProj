@@ -12,11 +12,8 @@ earthquakes_frame = get_quakes()
 conn = create_database()
 println("Database connected")
 insert_into_db(conn, earthquakes_frame)
-view_df = get_view(conn, "earthquakes_table")
-#println(view_df)
-n = nrow(view_df) - nrow(earthquakes_frame)
+
 println("Sucess!")
-println("Added $n entries to the database")
 
 println("Closing Connection")
 DBInterface.close!(conn)

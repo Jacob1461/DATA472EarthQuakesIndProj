@@ -3,9 +3,9 @@ using JSON
 
 db_username = ENV["DB_USERNAME"]
 db_password = ENV["DB_PASSWORD"]
-
+db_host = ENV["DB_HOST"]
 function create_database()
-    host = "data472-jcl173-earthquakesdb.cyi9p9kw8doa.ap-southeast-2.rds.amazonaws.com"
+    host = db_host
     user = db_username
     password = db_password   
     database_name = "data472_jcl173_earthquakesdb"
