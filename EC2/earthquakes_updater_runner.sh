@@ -1,4 +1,4 @@
-LOG_DIR="/home/ubuntu/"
+LOG_DIR="/home/ubuntu/logs"
 LOG_FILE_PATTERN="$LOG_DIR/logfile-$(date +'%Y-%m-%d').log"
 
 run_container() {
