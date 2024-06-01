@@ -49,3 +49,5 @@ and add three fields
 - Repeat these steps for the other image as well. The API VM has two bash files located in the EC2 folder on github. Make them both executable and run them. The Check api will check that the api is running, and if not (and the container hasn't just started up) then it will stop all docker containers then restart the API docker images (don't run this bash file if both images are on one machine).
 
 
+#### LLM usage
+- Chat Gpt has been used in several scripts (particularly in the earlier stage of the project) for assistance in debugging and learning how to use new tools and help write scripts (like bash files).
